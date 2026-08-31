@@ -1,6 +1,8 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildJunctionRelationTargetShape } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-junction-relation-target-shape.util';
 import { junctionRelationTargetShapeTestFixtures } from 'src/engine/metadata-modules/flat-field-metadata/utils/__tests__/junction-relation-target-shape.test-fixtures';
 
@@ -10,6 +12,7 @@ const {
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
   NON_MORPH_JUNCTION_TARGET_FIELD,
+  NOTE_OBJECT,
   NOTE_TARGET_COMPANY_FIELD,
   NOTE_TARGET_NOTE_FIELD,
   NOTE_TARGET_PERSON_FIELD,
