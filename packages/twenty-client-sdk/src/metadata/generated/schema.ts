@@ -661,26 +661,6 @@ export interface ApplicationRegistration {
     __typename: 'ApplicationRegistration'
 }
 
-export interface UsageLimit {
-    id: Scalars['UUID']
-    resourceType: UsageResourceType
-    operationType: UsageOperationType
-    spenderType: Scalars['String']
-    spenderId: Scalars['String']
-    limitKind: Scalars['String']
-    windowSeconds: Scalars['Int']
-    limitValueType: Scalars['String']
-    limitValue: Scalars['BigInt']
-    burstValue?: Scalars['BigInt']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    __typename: 'UsageLimit'
-}
-
-export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL'
-
-export type UsageOperationType = 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'API_REQUEST'
-
 export interface SdkClientChecksums {
     core?: Scalars['String']
     metadata: Scalars['String']
@@ -1471,6 +1451,60 @@ export interface ConnectedAccountPublicDTO {
     __typename: 'ConnectedAccountPublicDTO'
 }
 
+export interface UsageLimit {
+    id: Scalars['UUID']
+    resourceType: UsageResourceType
+    operationType: UsageOperationType
+    spenderType: Scalars['String']
+    spenderId: Scalars['String']
+    limitKind: Scalars['String']
+    periodCount: Scalars['Int']
+    /** @deprecated Use periodCount and periodUnit */
+    windowSeconds: Scalars['Int']
+    periodUnit: Scalars['String']
+    meter: Scalars['String']
+    limitValueType: Scalars['String']
+    limitValue: Scalars['BigInt']
+    burstValue?: Scalars['BigInt']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    __typename: 'UsageLimit'
+}
+
+export type UsageResourceType = 'AI' | 'WORKFLOW' | 'APP' | 'STORAGE' | 'API' | 'LOGIC_FUNCTION' | 'EMAIL'
+
+export type UsageOperationType = 'ALL' | 'AI_CHAT_TOKEN' | 'AI_WORKFLOW_TOKEN' | 'WORKFLOW_EXECUTION' | 'CODE_EXECUTION' | 'WEB_SEARCH' | 'CALL_RECORDING' | 'EMAIL_SEND' | 'API_REQUEST'
+
+export interface UsageBreakdownItem {
+    key: Scalars['String']
+    label?: Scalars['String']
+    creditsUsed: Scalars['Float']
+    __typename: 'UsageBreakdownItem'
+}
+
+export interface UsageTimeSeries {
+    date: Scalars['String']
+    creditsUsed: Scalars['Float']
+    __typename: 'UsageTimeSeries'
+}
+
+export interface UsageUserDaily {
+    userWorkspaceId: Scalars['String']
+    dailyUsage: UsageTimeSeries[]
+    __typename: 'UsageUserDaily'
+}
+
+export interface UsageAnalytics {
+    usageByUser: UsageBreakdownItem[]
+    usageByOperationType: UsageBreakdownItem[]
+    usageByModel: UsageBreakdownItem[]
+    timeSeries: UsageTimeSeries[]
+    periodStart: Scalars['DateTime']
+    periodEnd: Scalars['DateTime']
+    userDailyUsage?: UsageUserDaily
+    __typename: 'UsageAnalytics'
+}
+
 export interface FeatureFlag {
     key: FeatureFlagKey
     value: Scalars['Boolean']
@@ -1689,13 +1723,6 @@ export interface ClientConfig {
     enterpriseInstanceType: Scalars['String']
     maintenance?: ClientConfigMaintenanceMode
     __typename: 'ClientConfig'
-}
-
-export interface UsageBreakdownItem {
-    key: Scalars['String']
-    label?: Scalars['String']
-    creditsUsed: Scalars['Float']
-    __typename: 'UsageBreakdownItem'
 }
 
 export interface ClaimableApplicationRegistration {
@@ -2240,29 +2267,6 @@ export interface Impersonate {
 export interface StopImpersonation {
     canRestoreImpersonatorSession: Scalars['Boolean']
     __typename: 'StopImpersonation'
-}
-
-export interface UsageTimeSeries {
-    date: Scalars['String']
-    creditsUsed: Scalars['Float']
-    __typename: 'UsageTimeSeries'
-}
-
-export interface UsageUserDaily {
-    userWorkspaceId: Scalars['String']
-    dailyUsage: UsageTimeSeries[]
-    __typename: 'UsageUserDaily'
-}
-
-export interface UsageAnalytics {
-    usageByUser: UsageBreakdownItem[]
-    usageByOperationType: UsageBreakdownItem[]
-    usageByModel: UsageBreakdownItem[]
-    timeSeries: UsageTimeSeries[]
-    periodStart: Scalars['DateTime']
-    periodEnd: Scalars['DateTime']
-    userDailyUsage?: UsageUserDaily
-    __typename: 'UsageAnalytics'
 }
 
 export interface ApplicationAuthorization {
@@ -2989,6 +2993,7 @@ export interface Query {
     enterprisePortalSession?: Scalars['String']
     enterpriseCheckoutSession?: Scalars['String']
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTO
+    getUsageAnalytics: UsageAnalytics
     usageLimits: UsageLimit[]
     getViewFilterGroups: ViewFilterGroup[]
     getViewFilterGroup?: ViewFilterGroup
@@ -3098,7 +3103,6 @@ export interface Query {
     getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount
     getAutoCompleteAddress: AutocompleteResult[]
     getAddressDetails: PlaceDetailsResult
-    getUsageAnalytics: UsageAnalytics
     findManyPublicDomains: PublicDomain[]
     currentUserApplicationAuthorizations: ApplicationAuthorization[]
     __typename: 'Query'
@@ -4036,23 +4040,6 @@ export interface ApplicationRegistrationGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface UsageLimitGenqlSelection{
-    id?: boolean | number
-    resourceType?: boolean | number
-    operationType?: boolean | number
-    spenderType?: boolean | number
-    spenderId?: boolean | number
-    limitKind?: boolean | number
-    windowSeconds?: boolean | number
-    limitValueType?: boolean | number
-    limitValue?: boolean | number
-    burstValue?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface SdkClientChecksumsGenqlSelection{
     core?: boolean | number
     metadata?: boolean | number
@@ -4890,6 +4877,61 @@ export interface ConnectedAccountPublicDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface UsageLimitGenqlSelection{
+    id?: boolean | number
+    resourceType?: boolean | number
+    operationType?: boolean | number
+    spenderType?: boolean | number
+    spenderId?: boolean | number
+    limitKind?: boolean | number
+    periodCount?: boolean | number
+    /** @deprecated Use periodCount and periodUnit */
+    windowSeconds?: boolean | number
+    periodUnit?: boolean | number
+    meter?: boolean | number
+    limitValueType?: boolean | number
+    limitValue?: boolean | number
+    burstValue?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageBreakdownItemGenqlSelection{
+    key?: boolean | number
+    label?: boolean | number
+    creditsUsed?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageTimeSeriesGenqlSelection{
+    date?: boolean | number
+    creditsUsed?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageUserDailyGenqlSelection{
+    userWorkspaceId?: boolean | number
+    dailyUsage?: UsageTimeSeriesGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface UsageAnalyticsGenqlSelection{
+    usageByUser?: UsageBreakdownItemGenqlSelection
+    usageByOperationType?: UsageBreakdownItemGenqlSelection
+    usageByModel?: UsageBreakdownItemGenqlSelection
+    timeSeries?: UsageTimeSeriesGenqlSelection
+    periodStart?: boolean | number
+    periodEnd?: boolean | number
+    userDailyUsage?: UsageUserDailyGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface FeatureFlagGenqlSelection{
     key?: boolean | number
     value?: boolean | number
@@ -5116,14 +5158,6 @@ export interface ClientConfigGenqlSelection{
     isOnboardingAiChatEnabled?: boolean | number
     enterpriseInstanceType?: boolean | number
     maintenance?: ClientConfigMaintenanceModeGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageBreakdownItemGenqlSelection{
-    key?: boolean | number
-    label?: boolean | number
-    creditsUsed?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5713,32 +5747,6 @@ export interface ImpersonateGenqlSelection{
 
 export interface StopImpersonationGenqlSelection{
     canRestoreImpersonatorSession?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageTimeSeriesGenqlSelection{
-    date?: boolean | number
-    creditsUsed?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageUserDailyGenqlSelection{
-    userWorkspaceId?: boolean | number
-    dailyUsage?: UsageTimeSeriesGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UsageAnalyticsGenqlSelection{
-    usageByUser?: UsageBreakdownItemGenqlSelection
-    usageByOperationType?: UsageBreakdownItemGenqlSelection
-    usageByModel?: UsageBreakdownItemGenqlSelection
-    timeSeries?: UsageTimeSeriesGenqlSelection
-    periodStart?: boolean | number
-    periodEnd?: boolean | number
-    userDailyUsage?: UsageUserDailyGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6494,6 +6502,7 @@ export interface QueryGenqlSelection{
     enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
     enterpriseCheckoutSession?: { __args: {billingInterval?: (Scalars['String'] | null)} } | boolean | number
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
+    getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
     usageLimits?: UsageLimitGenqlSelection
     getViewFilterGroups?: (ViewFilterGroupGenqlSelection & { __args?: {viewId?: (Scalars['String'] | null)} })
     getViewFilterGroup?: (ViewFilterGroupGenqlSelection & { __args: {id: Scalars['String']} })
@@ -6615,12 +6624,13 @@ export interface QueryGenqlSelection{
     getConnectedImapSmtpCaldavAccount?: (ConnectedImapSmtpCaldavAccountGenqlSelection & { __args: {id: Scalars['UUID']} })
     getAutoCompleteAddress?: (AutocompleteResultGenqlSelection & { __args: {address: Scalars['String'], token: Scalars['String'], country?: (Scalars['String'] | null), isFieldCity?: (Scalars['Boolean'] | null)} })
     getAddressDetails?: (PlaceDetailsResultGenqlSelection & { __args: {placeId: Scalars['String'], token: Scalars['String']} })
-    getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
     findManyPublicDomains?: PublicDomainGenqlSelection
     currentUserApplicationAuthorizations?: ApplicationAuthorizationGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface UsageAnalyticsInput {periodStart?: (Scalars['DateTime'] | null),periodEnd?: (Scalars['DateTime'] | null),userWorkspaceId?: (Scalars['String'] | null),operationTypes?: (UsageOperationType[] | null)}
 
 export interface GetApiKeyInput {id: Scalars['UUID']}
 
@@ -6653,8 +6663,6 @@ export interface PieChartDataInput {objectMetadataId: Scalars['UUID'],configurat
 export interface LineChartDataInput {objectMetadataId: Scalars['UUID'],configuration: Scalars['JSON']}
 
 export interface BarChartDataInput {objectMetadataId: Scalars['UUID'],configuration: Scalars['JSON']}
-
-export interface UsageAnalyticsInput {periodStart?: (Scalars['DateTime'] | null),periodEnd?: (Scalars['DateTime'] | null),userWorkspaceId?: (Scalars['String'] | null),operationTypes?: (UsageOperationType[] | null)}
 
 export interface MutationGenqlSelection{
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
@@ -6925,7 +6933,9 @@ update: UpdateNavigationMenuItemInput}
 
 export interface UpdateNavigationMenuItemInput {folderId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null),name?: (Scalars['String'] | null),link?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),color?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null)}
 
-export interface UpsertUsageLimitInput {resourceType: UsageResourceType,operationType: UsageOperationType,spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),limitKind: Scalars['String'],windowSeconds: Scalars['Int'],limitValue: Scalars['BigInt'],burstValue?: (Scalars['BigInt'] | null)}
+export interface UpsertUsageLimitInput {resourceType: UsageResourceType,operationType?: (UsageOperationType | null),spenderType: Scalars['String'],spenderId?: (Scalars['String'] | null),limitKind: Scalars['String'],periodCount: Scalars['Int'],periodUnit: Scalars['String'],
+/** Deprecated: use periodCount and periodUnit */
+windowSeconds?: (Scalars['Int'] | null),meter: Scalars['String'],limitValueType: Scalars['String'],limitValue: Scalars['BigInt'],burstValue?: (Scalars['BigInt'] | null)}
 
 export interface CreateViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
@@ -7621,14 +7631,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const UsageLimit_possibleTypes: string[] = ['UsageLimit']
-    export const isUsageLimit = (obj?: { __typename?: any } | null): obj is UsageLimit => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageLimit"')
-      return UsageLimit_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const SdkClientChecksums_possibleTypes: string[] = ['SdkClientChecksums']
     export const isSdkClientChecksums = (obj?: { __typename?: any } | null): obj is SdkClientChecksums => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isSdkClientChecksums"')
@@ -8277,6 +8279,46 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const UsageLimit_possibleTypes: string[] = ['UsageLimit']
+    export const isUsageLimit = (obj?: { __typename?: any } | null): obj is UsageLimit => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageLimit"')
+      return UsageLimit_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageBreakdownItem_possibleTypes: string[] = ['UsageBreakdownItem']
+    export const isUsageBreakdownItem = (obj?: { __typename?: any } | null): obj is UsageBreakdownItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageBreakdownItem"')
+      return UsageBreakdownItem_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageTimeSeries_possibleTypes: string[] = ['UsageTimeSeries']
+    export const isUsageTimeSeries = (obj?: { __typename?: any } | null): obj is UsageTimeSeries => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageTimeSeries"')
+      return UsageTimeSeries_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageUserDaily_possibleTypes: string[] = ['UsageUserDaily']
+    export const isUsageUserDaily = (obj?: { __typename?: any } | null): obj is UsageUserDaily => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageUserDaily"')
+      return UsageUserDaily_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const UsageAnalytics_possibleTypes: string[] = ['UsageAnalytics']
+    export const isUsageAnalytics = (obj?: { __typename?: any } | null): obj is UsageAnalytics => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageAnalytics"')
+      return UsageAnalytics_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const FeatureFlag_possibleTypes: string[] = ['FeatureFlag']
     export const isFeatureFlag = (obj?: { __typename?: any } | null): obj is FeatureFlag => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isFeatureFlag"')
@@ -8449,14 +8491,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isClientConfig = (obj?: { __typename?: any } | null): obj is ClientConfig => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isClientConfig"')
       return ClientConfig_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageBreakdownItem_possibleTypes: string[] = ['UsageBreakdownItem']
-    export const isUsageBreakdownItem = (obj?: { __typename?: any } | null): obj is UsageBreakdownItem => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageBreakdownItem"')
-      return UsageBreakdownItem_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -8961,30 +8995,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isStopImpersonation = (obj?: { __typename?: any } | null): obj is StopImpersonation => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isStopImpersonation"')
       return StopImpersonation_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageTimeSeries_possibleTypes: string[] = ['UsageTimeSeries']
-    export const isUsageTimeSeries = (obj?: { __typename?: any } | null): obj is UsageTimeSeries => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageTimeSeries"')
-      return UsageTimeSeries_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageUserDaily_possibleTypes: string[] = ['UsageUserDaily']
-    export const isUsageUserDaily = (obj?: { __typename?: any } | null): obj is UsageUserDaily => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageUserDaily"')
-      return UsageUserDaily_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UsageAnalytics_possibleTypes: string[] = ['UsageAnalytics']
-    export const isUsageAnalytics = (obj?: { __typename?: any } | null): obj is UsageAnalytics => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUsageAnalytics"')
-      return UsageAnalytics_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -9877,27 +9887,6 @@ export const enumOnboardingStatus = {
    COMPLETED: 'COMPLETED' as const
 }
 
-export const enumUsageResourceType = {
-   AI: 'AI' as const,
-   WORKFLOW: 'WORKFLOW' as const,
-   APP: 'APP' as const,
-   STORAGE: 'STORAGE' as const,
-   API: 'API' as const,
-   LOGIC_FUNCTION: 'LOGIC_FUNCTION' as const,
-   EMAIL: 'EMAIL' as const
-}
-
-export const enumUsageOperationType = {
-   AI_CHAT_TOKEN: 'AI_CHAT_TOKEN' as const,
-   AI_WORKFLOW_TOKEN: 'AI_WORKFLOW_TOKEN' as const,
-   WORKFLOW_EXECUTION: 'WORKFLOW_EXECUTION' as const,
-   CODE_EXECUTION: 'CODE_EXECUTION' as const,
-   WEB_SEARCH: 'WEB_SEARCH' as const,
-   CALL_RECORDING: 'CALL_RECORDING' as const,
-   EMAIL_SEND: 'EMAIL_SEND' as const,
-   API_REQUEST: 'API_REQUEST' as const
-}
-
 export const enumWidgetType = {
    VIEW: 'VIEW' as const,
    IFRAME: 'IFRAME' as const,
@@ -10086,6 +10075,28 @@ export const enumEmailConnectionSecurity = {
    NONE: 'NONE' as const,
    STARTTLS: 'STARTTLS' as const,
    SSL_TLS: 'SSL_TLS' as const
+}
+
+export const enumUsageResourceType = {
+   AI: 'AI' as const,
+   WORKFLOW: 'WORKFLOW' as const,
+   APP: 'APP' as const,
+   STORAGE: 'STORAGE' as const,
+   API: 'API' as const,
+   LOGIC_FUNCTION: 'LOGIC_FUNCTION' as const,
+   EMAIL: 'EMAIL' as const
+}
+
+export const enumUsageOperationType = {
+   ALL: 'ALL' as const,
+   AI_CHAT_TOKEN: 'AI_CHAT_TOKEN' as const,
+   AI_WORKFLOW_TOKEN: 'AI_WORKFLOW_TOKEN' as const,
+   WORKFLOW_EXECUTION: 'WORKFLOW_EXECUTION' as const,
+   CODE_EXECUTION: 'CODE_EXECUTION' as const,
+   WEB_SEARCH: 'WEB_SEARCH' as const,
+   CALL_RECORDING: 'CALL_RECORDING' as const,
+   EMAIL_SEND: 'EMAIL_SEND' as const,
+   API_REQUEST: 'API_REQUEST' as const
 }
 
 export const enumFeatureFlagKey = {
