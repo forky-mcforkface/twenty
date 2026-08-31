@@ -56,6 +56,7 @@ describe('resolveJunctionRelationTargetShapeFromVisibleField', () => {
       junctionObjectMetadataId: NOTE_TARGET_OBJECT.id,
       junctionObjectNameSingular: NOTE_TARGET_OBJECT.nameSingular,
       junctionSourceJoinColumnName: 'noteId',
+      isTargetMorphRelation: true,
       targetJoinColumns: [
         {
           joinColumnName: 'targetPersonId',
@@ -114,6 +115,7 @@ describe('resolveJunctionRelationTargetShapeFromVisibleField', () => {
       junctionObjectMetadataId: NOTE_TARGET_OBJECT.id,
       junctionObjectNameSingular: NOTE_TARGET_OBJECT.nameSingular,
       junctionSourceJoinColumnName: 'personId',
+      isTargetMorphRelation: false,
       targetJoinColumns: [
         {
           joinColumnName: 'noteId',
@@ -134,6 +136,7 @@ describe('resolveJunctionRelationTargetShapeFromVisibleField', () => {
       junctionObjectMetadataId: NOTE_TARGET_OBJECT.id,
       junctionObjectNameSingular: NOTE_TARGET_OBJECT.nameSingular,
       junctionSourceJoinColumnName: 'targetCompanyId',
+      isTargetMorphRelation: false,
       targetJoinColumns: [
         {
           joinColumnName: 'noteId',
@@ -259,6 +262,7 @@ describe('resolveJunctionRelationTargetShapeFromVisibleField', () => {
       junctionObjectMetadataId: NOTE_TARGET_OBJECT.id,
       junctionObjectNameSingular: NOTE_TARGET_OBJECT.nameSingular,
       junctionSourceJoinColumnName: 'targetCompanyId',
+      isTargetMorphRelation: false,
       targetJoinColumns: [
         {
           joinColumnName: 'noteId',

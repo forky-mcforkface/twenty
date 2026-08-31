@@ -96,6 +96,9 @@ export const buildJunctionRelationTargetShape = ({
         junctionSourceJoinColumnName: getJoinColumnNameForRelationField(
           junctionSourceFlatFieldMetadata,
         ),
+        isTargetMorphRelation:
+          junctionTargetFlatFieldMetadata.type ===
+          FieldMetadataType.MORPH_RELATION,
         targetJoinColumns,
       };
 };
