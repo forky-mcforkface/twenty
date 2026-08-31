@@ -38,6 +38,7 @@ export const usageLimitToGraphqlApiExceptionHandler = (
       scope: {
         spenderType: exhaustedScope.spenderType,
         spenderId: exhaustedScope.spenderId,
+        operationType: exhaustedScope.operationType || null,
       },
     },
   );
